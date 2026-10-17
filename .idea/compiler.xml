@@ -9,8 +9,5 @@
         <module name="ZSI_project" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="ZSI_project" target="16" />
-    </bytecodeTargetLevel>
   </component>
 </project>

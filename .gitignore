@@ -1,3 +1,18 @@
-# Project exclude paths
-/out/
+# Build output
 /target/
+/out/
+*.class
+
+# IDE
+/.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
