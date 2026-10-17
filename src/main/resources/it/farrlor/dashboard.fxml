@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Priority?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+
+<ScrollPane fitToWidth="true" styleClass="viewport" xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.farrlor.DashboardController">
+    <content>
+        <VBox styleClass="root-pane" spacing="16.0">
+            <padding>
+                <Insets top="20.0" right="24.0" bottom="20.0" left="24.0"/>
+            </padding>
+
+            <!-- Header -->
+            <VBox spacing="2.0">
+                <Label styleClass="app-title" text="Fuzzy Climate Controller"/>
+                <Label styleClass="app-subtitle"
+                       text="A Mamdani fuzzy-logic simulator for intelligent humidity regulation"/>
+            </VBox>
+
+            <HBox spacing="16.0" VBox.vgrow="ALWAYS">
+
+                <!-- Left column -->
+                <VBox spacing="16.0" prefWidth="420.0">
+
+                    <!-- Environmental measurements -->
+                    <VBox styleClass="card" spacing="10.0">
+                        <Label styleClass="card-title" text="Environmental Measurements"/>
+                        <GridPane hgap="14.0" vgap="8.0">
+                            <columnConstraints>
+                                <ColumnConstraints percentWidth="50.0"/>
+                                <ColumnConstraints percentWidth="50.0"/>
+                            </columnConstraints>
+                            <children>
+                                <VBox styleClass="metric" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                                    <Label styleClass="metric-caption" text="Temperature"/>
+                                    <Label fx:id="temperatureValueLabel" styleClass="metric-value" text="— °C"/>
+                                    <Label fx:id="temperatureClassLabel" styleClass="metric-tag" text="—"/>
+                                </VBox>
+                                <VBox styleClass="metric" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                                    <Label styleClass="metric-caption" text="Relative humidity"/>
+                                    <Label fx:id="humidityValueLabel" styleClass="metric-value" text="— %"/>
+                                    <Label fx:id="humidityClassLabel" styleClass="metric-tag" text="—"/>
+                                </VBox>
+                            </children>
+                        </GridPane>
+                    </VBox>
+
+                    <!-- Controller status -->
+                    <VBox styleClass="card" spacing="10.0">
+                        <Label styleClass="card-title" text="Controller Status"/>
+                        <HBox spacing="8.0" alignment="CENTER_LEFT">
+                            <Label styleClass="field-caption" text="Action:"/>
+                            <Label fx:id="actionLabel" styleClass="action-value" text="—"/>
+                        </HBox>
+                        <HBox spacing="8.0" alignment="CENTER_LEFT">
+                            <Label styleClass="field-caption" text="Intensity:"/>
+                            <ProgressBar fx:id="intensityBar" progress="0.0" prefWidth="180.0"/>
+                            <Label fx:id="intensityLabel" styleClass="mono" text="+0.000"/>
+                        </HBox>
+                        <HBox spacing="18.0" alignment="CENTER_LEFT">
+                            <Label styleClass="field-caption" text="State:"/>
+                            <Label fx:id="stateLabel" text="Stopped"/>
+                            <Label styleClass="field-caption" text="Steps:"/>
+                            <Label fx:id="stepLabel" text="0"/>
+                        </HBox>
+                        <Label fx:id="targetRangeLabel" styleClass="hint" text="Target band: —"/>
+                    </VBox>
+
+                    <!-- Simulation controls -->
+                    <VBox styleClass="card" spacing="10.0">
+                        <Label styleClass="card-title" text="Simulation Controls"/>
+                        <GridPane hgap="10.0" vgap="8.0">
+                            <columnConstraints>
+                                <ColumnConstraints minWidth="150.0"/>
+                                <ColumnConstraints hgrow="ALWAYS"/>
+                            </columnConstraints>
+                            <children>
+                                <Label styleClass="field-caption" text="Temperature [°C]"
+                                       GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                                <TextField fx:id="temperatureField" promptText="20.0 – 27.0"
+                                           GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                                <Label styleClass="field-caption" text="Humidity [%]"
+                                       GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                                <TextField fx:id="humidityField" promptText="0 – 100"
+                                           GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                            </children>
+                        </GridPane>
+                        <Button styleClass="apply-button" maxWidth="Infinity" onAction="#onApplyInputs"
+                                text="Apply measurements"/>
+                        <Label fx:id="validationLabel" styleClass="validation" managed="false" visible="false"
+                               wrapText="true"/>
+                        <Separator/>
+                        <HBox spacing="8.0">
+                            <Button fx:id="startButton" styleClass="primary-button" onAction="#onStart"
+                                    text="Start" maxWidth="Infinity" HBox.hgrow="ALWAYS"/>
+                            <Button fx:id="pauseButton" onAction="#onPause" text="Pause"/>
+                            <Button fx:id="resumeButton" onAction="#onResume" text="Resume"/>
+                            <Button fx:id="resetButton" onAction="#onReset" text="Reset"/>
+                        </HBox>
+                    </VBox>
+                </VBox>
+
+                <!-- Right column -->
+                <VBox spacing="16.0" HBox.hgrow="ALWAYS">
+
+                    <!-- Fuzzy diagnostics -->
+                    <VBox styleClass="card" spacing="10.0">
+                        <Label styleClass="card-title" text="Fuzzy Logic Diagnostics"/>
+                        <Label styleClass="section-caption" text="Temperature membership degrees"/>
+                        <VBox fx:id="temperatureMembershipBox" spacing="4.0"/>
+                        <Label styleClass="section-caption" text="Humidity membership degrees"/>
+                        <VBox fx:id="humidityMembershipBox" spacing="4.0"/>
+                        <Label styleClass="section-caption" text="Activated rules (strength · rule)"/>
+                        <ListView fx:id="activeRulesList" prefHeight="150.0"/>
+                        <Label fx:id="crispOutputLabel" styleClass="crisp-output" text="Crisp control signal: —"/>
+                    </VBox>
+
+                    <!-- Humidity chart -->
+                    <VBox styleClass="card" spacing="6.0" VBox.vgrow="ALWAYS">
+                        <Label styleClass="card-title" text="Relative Humidity Over Time"/>
+                        <LineChart fx:id="humidityChart" legendVisible="false" VBox.vgrow="ALWAYS">
+                            <xAxis>
+                                <NumberAxis label="Simulation step" forceZeroInRange="false"/>
+                            </xAxis>
+                            <yAxis>
+                                <NumberAxis label="Relative humidity [%]" lowerBound="0.0" upperBound="100.0"
+                                            autoRanging="false" tickUnit="20.0"/>
+                            </yAxis>
+                        </LineChart>
+                    </VBox>
+
+                    <Region VBox.vgrow="ALWAYS"/>
+                </VBox>
+            </HBox>
+        </VBox>
+    </content>
+</ScrollPane>
